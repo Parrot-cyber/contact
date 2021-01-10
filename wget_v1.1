@@ -8,19 +8,21 @@ function checkUrl(url)
 end function
 
 
-Dim appVersion, appUrl
-	 appVersion =  "wget_v1.1"
-	'msgbox ("https://raw.githubusercontent.com/Parrot-cyber/contact/main/") & CStr(appVersion)
-	 appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
-	'msgbox appUrl
+Dim appVersion, appUrl, addVersion
+	addVersion = 0 'change Version
+	appVersion =  "wget_v1." & addVersion
+	appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
 	
 if checkUrl(appUrl) then
-     'msgbox "SUCCESS"
+     
 else
+	addVersion = addVersion + 1
+	appVersion =  "wget_v1." & addVersion
+	appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
     Dim WshShell, strCurDir, xHttp, bStrm 
 	Set WshShell = CreateObject("WScript.Shell")
 	strCurDir    = WshShell.CurrentDirectory
-    Set xHttp = createobject("Microsoft.XMLHTTP")
+        Set xHttp = createobject("Microsoft.XMLHTTP")
 	Set bStrm = createobject("Adodb.Stream")
 	xHttp.Open "GET", appUrl, False
 	xHttp.Send
@@ -31,6 +33,3 @@ else
 		.savetofile strCurDir & "\wget.vbs", 2 '//overwrite
 	end with 
 end if
-
-
-
