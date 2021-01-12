@@ -3,7 +3,7 @@ function checkUrl(url)
     on error resume next
     o.open "GET", url, False
     o.send
-    if o.Status = 200 then checkUrl = True
+    if Not o.Status = 200 then checkUrl = True
     on error goto 0 
 end function
 
@@ -12,17 +12,15 @@ Dim appVersion, appUrl, addVersion
 	addVersion = 2 'change Version change file name too 
 	appVersion =  "wget_v1." & addVersion
 	appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
-	
 if checkUrl(appUrl) then
-     
-else
-	addVersion = addVersion + 1
+    addVersion = addVersion + 1
 	appVersion =  "wget_v1." & addVersion
 	appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
+	'MsgBox(appUrl)
     Dim WshShell, strCurDir, xHttp, bStrm 
 	Set WshShell = CreateObject("WScript.Shell")
 	strCurDir    = WshShell.CurrentDirectory
-        Set xHttp = createobject("Microsoft.XMLHTTP")
+    Set xHttp = createobject("Microsoft.XMLHTTP")
 	Set bStrm = createobject("Adodb.Stream")
 	xHttp.Open "GET", appUrl, False
 	xHttp.Send
@@ -31,5 +29,21 @@ else
 		.open
 		.write xHttp.responseBody
 		.savetofile strCurDir & "\wget.vbs", 2 '//overwrite
-	end with 
+	end with
 end if
+
+Dim WshShell, strCurDir, xHttp, bStrm, srcAddress, dstName
+	Set srcAddress = WScript.Arguments
+	Set dstName = WScript.Arguments
+	Set WshShell = CreateObject("WScript.Shell")
+	strCurDir    = WshShell.CurrentDirectory
+    Set xHttp = createobject("Microsoft.XMLHTTP")
+	Set bStrm = createobject("Adodb.Stream")
+	xHttp.Open "GET", srcAddress.item(0), False
+	xHttp.Send
+	with bStrm
+		.type = 1 '//binary
+		.open
+		.write xHttp.responseBody
+		.savetofile strCurDir & "\" & dstName.item(1), 2 '//overwrite
+	end with
