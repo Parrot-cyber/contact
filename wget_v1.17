@@ -1,49 +1,80 @@
-function checkUrl(url)
-    Set o = CreateObject("MSXML2.XMLHTTP")
-    on error resume next
-    o.open "GET", url, False
-    o.send
-    if Not o.Status = 200 then checkUrl = True
-    on error goto 0 
-end function
-
-
-Dim appVersion, appUrl, addVersion
-	addVersion = 2 'change Version change file name too 
-	appVersion =  "wget_v1." & addVersion
-	appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
-if checkUrl(appUrl) then
-    addVersion = addVersion + 1
-	appVersion =  "wget_v1." & addVersion
-	appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
-	'MsgBox(appUrl)
-    Dim WshShell, strCurDir, xHttp, bStrm 
+Dim wGetArgs, WshShell, strCurDir, xHttp, bStrm, appVersion, appUrl, addVersion
+	Set wGetArgs = WScript.Arguments
 	Set WshShell = CreateObject("WScript.Shell")
 	strCurDir    = WshShell.CurrentDirectory
-    Set xHttp = createobject("Microsoft.XMLHTTP")
-	Set bStrm = createobject("Adodb.Stream")
-	xHttp.Open "GET", appUrl, False
-	xHttp.Send
-	with bStrm
-		.type = 1 '//binary
-		.open
-		.write xHttp.responseBody
-		.savetofile strCurDir & "\wget.vbs", 2 '//overwrite
-	end with
-end if
+	addVersion = 16 'change Version change file name too 
+	appVersion =  "wget_v1." & addVersion
+	appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
+	'MsgBox("Out Of The Loop" & appUrl)
+	
+	function FileExists(FilePath)
+		Set fso = CreateObject("Scripting.FileSystemObject")
+		If Not fso.FileExists(FilePath) Then
+			FileExists=CBool(1)
+		Else
+			FileExists=CBool(0)
+		end If
+	end function
 
-Dim WshShell, strCurDir, xHttp, bStrm, srcAddress, dstName
-	Set srcAddress = WScript.Arguments
-	Set dstName = WScript.Arguments
-	Set WshShell = CreateObject("WScript.Shell")
-	strCurDir    = WshShell.CurrentDirectory
-    Set xHttp = createobject("Microsoft.XMLHTTP")
-	Set bStrm = createobject("Adodb.Stream")
-	xHttp.Open "GET", srcAddress.item(0), False
-	xHttp.Send
-	with bStrm
-		.type = 1 '//binary
-		.open
-		.write xHttp.responseBody
-		.savetofile strCurDir & "\" & dstName.item(1), 2 '//overwrite
-	end with
+	function checkUrl(url)
+			Set o = CreateObject("MSXML2.XMLHTTP")
+			on error resume next
+			o.open "GET", url, False
+			o.send
+			if o.Status = 404 then checkUrl = o.Status
+			on error goto 0 
+	end function
+	
+	if WScript.Arguments.Count = 0 then
+		Do while True:
+		
+			'MsgBox("Loop Start")
+			'MsgBox(appUrl)
+			'MsgBox(checkUrl(appUrl))
+			if checkUrl(appUrl) = 404 then
+				'MsgBox(checkUrl(appUrl))
+				addVersion = addVersion + 1
+				appVersion =  "wget_v1." & addVersion
+				appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
+				Set xHttp = createobject("Microsoft.XMLHTTP")
+				Set bStrm = createobject("Adodb.Stream")
+				xHttp.Open "GET", appUrl, False
+				xHttp.Send
+				with bStrm
+					.type = 1 '//binary
+					.open
+					.write xHttp.responseBody
+					.savetofile strCurDir & "\" & appVersion & ".vbs", 2 '//overwrite
+				end with
+			elseif FileExists(strCurDir & "\" & appVersion & ".vbs") Then
+				MsgBox("File Downloading..")
+				'appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
+				Set xHttp = createobject("Microsoft.XMLHTTP")
+				Set bStrm = createobject("Adodb.Stream")
+				xHttp.Open "GET", appUrl, False
+				xHttp.Send
+				with bStrm
+					.type = 1 '//binary
+					.open
+					.write xHttp.responseBody
+					.savetofile strCurDir & "\" & appVersion & ".vbs", 2 '//overwrite
+				end with
+			end if
+			WScript.Sleep(60000)
+			'MsgBox(appUrl)
+			'MsgBox("After Timer")
+		loop
+	elseif WScript.Arguments.Count = 3 then
+		srcAddress = wGetArgs(1)
+		dstName = wGetArgs(2)
+		Set xHttp = createobject("Microsoft.XMLHTTP")
+		Set bStrm = createobject("Adodb.Stream")
+		xHttp.Open "GET", srcAddress, False
+		xHttp.Send
+		with bStrm
+			.type = 1 '//binary
+			.open
+			.write xHttp.responseBody
+			.savetofile strCurDir & "\" & dstName, 2 '//overwrite
+		end with
+	end if
