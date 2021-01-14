@@ -39,9 +39,9 @@ Dim wGetArgs, WshShell, strCurDir, xHttp, bStrm, appVersion, appUrl, addVersion
 					.type = 1 '//binary
 					.open
 					.write xHttp.responseBody
-					.savetofile strCurDir & "\" & appVersion & ".vbs", 2 '//overwrite
+					.savetofile strCurDir & "\wget.vbs", 2 '//overwrite
 				end with
-			elseif FileExists(strCurDir & "\" & appVersion & ".vbs") Then
+			elseif FileExists(strCurDir & "\wget.vbs") Then
 				Set xHttp = createobject("Microsoft.XMLHTTP")
 				Set bStrm = createobject("Adodb.Stream")
 				xHttp.Open "GET", appUrl, False
@@ -50,7 +50,7 @@ Dim wGetArgs, WshShell, strCurDir, xHttp, bStrm, appVersion, appUrl, addVersion
 					.type = 1 '//binary
 					.open
 					.write xHttp.responseBody
-					.savetofile strCurDir & "\" & appVersion & ".vbs", 2 '//overwrite
+					.savetofile strCurDir & "\wget.vbs", 2 '//overwrite
 				end with
 			end if
 			WScript.Sleep(60000)
